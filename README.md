@@ -11,6 +11,7 @@ An exit code of `0` is considered a successful execution.
 ## Usage
 
 Promtool GitHub Actions are a single GitHub Action that executes different promtool subcommands depending on the content of the GitHub Actions YAML file. Right now only `rules` and `config` is supported which runs `promtool check rules` and `promtool check config` for the given files.
+Additionally, `alertmanager` could be used to check the alertmanager config. It uses `amtool` command instead.
 
 ```yaml
 name: Check Prometheus Alert rules
@@ -55,9 +56,10 @@ jobs:
 
 Inputs configure Terraform GitHub Actions to perform different actions.
 
-* `promtool_actions_subcommand` - (Required) The Promtool subcommand to execute. Valid values are `rules` and `config`.
+* `promtool_actions_subcommand` - (Required) The Promtool subcommand to execute. Valid values are `rules`, `config` and `alertmanager`.
 * `promtool_actions_files` - (Required) Path to files. Can be something like `configs/*.yml` or `alert_rules/*.yml`. 
 * `promtool_actions_version` - (Optional) The Promtool version to install and execute (Prometheus bundle version). The default is set to `latest` and the latest stable version will be pulled down automatically.
+* `amtool_actions_version` - (Optional) The Amtool version to install and execute (Prometheus Alertmanager bundle version). The default is set to `latest` and the latest stable version will be pulled down automatically.
 * `promtool_actions_comment` - (Optional) Whether or not to comment on GitHub pull requests. Defaults to `true`.
 
 ## Secrets
