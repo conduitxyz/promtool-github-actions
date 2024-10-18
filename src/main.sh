@@ -35,32 +35,36 @@ function parseInputs {
 
 
 function installTool () {
-  if [[ "$3" == "latest" ]]; then
-    echo "Checking the latest version of $1"
-    promtoolVersion=$(git ls-remote --tags --refs --sort="v:refname"  https://github.com/prometheus/$2 | grep -v '[-].*' | tail -n1 | sed 's/.*\///' | cut -c 2-)
-    if [[ -z "$3" ]]; then
+  tool=$1
+  repo=$2
+  toolVersion=$3
+
+  if [[ "${toolVersion}" == "latest" ]]; then
+    echo "Checking the latest version of ${tool}"
+    toolVersion=$(git ls-remote --tags --refs --sort="v:refname"  https://github.com/prometheus/$repo | grep -v '[-].*' | tail -n1 | sed 's/.*\///' | cut -c 2-)
+    if [[ -z "${toolVersion}" ]]; then
       echo "Failed to fetch the latest version"
       exit 1
     fi
   fi
   
-  url="https://github.com/prometheus/$2/releases/download/v$3/prometheus-$3.linux-amd64.tar.gz"
+  url="https://github.com/prometheus/$repo/releases/download/v${toolVersion}/${repo}-${toolVersion}.linux-amd64.tar.gz"
 
-  echo "Downloading $1 v$3"
-  curl -s -S -L -o /tmp/$1_$3 ${url}
+  echo "Downloading ${tool} v${toolVersion}"
+  curl -s -S -L -o /tmp/${tool}_${toolVersion} ${url}
   if [ "${?}" -ne 0 ]; then
-    echo "Failed to download $1 v$3"
+    echo "Failed to download ${tool} v${toolVersion}"
     exit 1
   fi
-  echo "Successfully downloaded $1 v$3"
+  echo "Successfully downloaded ${tool} v${toolVersion}"
 
-  echo "Unzipping $1 v$3"
-  tar -zxf /tmp/$1_$3 --strip-components=1 --directory /usr/local/bin &> /dev/null
+  echo "Unzipping ${tool} v${toolVersion}"
+  tar -zxf /tmp/${tool}_${toolVersion} --strip-components=1 --directory /tmp/t &> /dev/null
   if [ "${?}" -ne 0 ]; then
-    echo "Failed to unzip $1 v$3"
+    echo "Failed to unzip ${tool} v${toolVersion}"
     exit 1
   fi
-  echo "Successfully unzipped $1 v$3"
+  echo "Successfully unzipped ${tool} v${toolVersion}"
 }
 
 function main {
@@ -75,16 +79,16 @@ function main {
 
   case "${promtoolSubcommand}" in
     config)
-      installTool "promtool" "prometheus" "$promtoolVersion"
+      installTool "promtool" "prometheus" "${promtoolVersion}"
       promtoolCheckConfig ${*}
       ;;
     rules)
-      installTool "promtool" "prometheus" "$promtoolVersion"
+      installTool "promtool" "prometheus" "${promtoolVersion}"
       promtoolCheckRules ${*}
       ;;
     alertmanager)
-      installTool "amtool" "alertmanager" "$amtoolVersion"
-      amtoolCheckRules ${*}
+      installTool "amtool" "alertmanager" "${amtoolVersion}"
+      amtoolCheckConfig ${*}
       ;;
     *)
       echo "Error: Must provide a valid value for promtool_subcommand"
