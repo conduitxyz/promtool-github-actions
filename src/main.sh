@@ -59,7 +59,7 @@ function installTool () {
   echo "Successfully downloaded ${tool} v${toolVersion}"
 
   echo "Unzipping ${tool} v${toolVersion}"
-  tar -zxf /tmp/${tool}_${toolVersion} --strip-components=1 --directory /tmp/t &> /dev/null
+  tar -zxf /tmp/${tool}_${toolVersion} --strip-components=1 --directory /usr/local/bin &> /dev/null
   if [ "${?}" -ne 0 ]; then
     echo "Failed to unzip ${tool} v${toolVersion}"
     exit 1
